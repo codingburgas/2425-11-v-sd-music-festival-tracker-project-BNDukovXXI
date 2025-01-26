@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Program.Models;
 
 namespace Program.DataAccess
 {
-    public class Database 
+    public class Database
     {
         public List<User> Users { get; set; } = new List<User>(); // List of users
         public List<MusicalEvent> MusicalEvents { get; set; } = new List<MusicalEvent>(); // List of musical events
@@ -101,6 +103,42 @@ namespace Program.DataAccess
                 {
                     MusicalEvents.Remove(ev);
                 }
+            }
+        }
+
+        // Finds a user by ID
+        public User GetUserById(int id)
+        {
+            lock (_lock) // Ensure thread safety
+            {
+                return Users.FirstOrDefault(u => u.Id == id);
+            }
+        }
+
+        // Finds a musical event by ID
+        public MusicalEvent GetEventById(int id)
+        {
+            lock (_lock) // Ensure thread safety
+            {
+                return MusicalEvents.FirstOrDefault(e => e.Id == id);
+            }
+        }
+
+        // Checks if a user with the given email already exists
+        public bool UserExists(string email)
+        {
+            lock (_lock) // Ensure thread safety
+            {
+                return Users.Any(u => u.Email == email);
+            }
+        }
+
+        // Checks if an event with the given ID already exists
+        public bool EventExists(int id)
+        {
+            lock (_lock) // Ensure thread safety
+            {
+                return MusicalEvents.Any(e => e.Id == id);
             }
         }
     }
